@@ -87,26 +87,6 @@ CHECK_HANDLER = CommandHandler('check', check_character, block=False)
 application.add_handler(CallbackQueryHandler(handle_callback_query, pattern='slaves_', block=False))
 application.add_handler(CHECK_HANDLER)
 
-@bot.on_message(filters.command(["ani"]))
-async def find(_, message: t.Message):
-    if len(message.command) < 2:
-        return await message.reply_text("Please provide the anime name.", quote=True)
-
-    anime_name = " ".join(message.command[1:])
-    characters = await collection.find({'anime': anime_name}).to_list(length=None)
-    
-    if not characters:
-        return await message.reply_text(f"No slave found from the anime {anime_name}.", quote=True)
-
-    seen_names = set()
-    captions = []
-    for char in characters:
-        if char['name'] not in seen_names:
-            captions.append(f"Name: {char['name']}\n")
-            seen_names.add(char['name'])
-
-    response = "\n".join(captions)
-    await message.reply_text(f"Characters from {anime_name}:\n\n{response}", quote=True)
 
 from pyrogram import Client, filters
 from shivu import user_collection
