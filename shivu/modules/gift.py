@@ -12,7 +12,7 @@ async def handle_gift_command(update: Update, context: CallbackContext):
     sender_id = message.from_user.id
 
     if not message.reply_to_message:
-        await message.reply_html("<b>You need to reply to a user's message to gift a slave!</b>")
+        await message.reply_html("<b>ʏᴏᴜ ɴᴇᴇᴅ ᴛᴏ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ's ᴍᴇssᴀɢᴇ ᴛᴏ ɢɪғᴛ ᴀ ᴡᴀɪғᴜ!</b>")
         return
 
     receiver_id = message.reply_to_message.from_user.id
@@ -20,11 +20,11 @@ async def handle_gift_command(update: Update, context: CallbackContext):
     receiver_first_name = message.reply_to_message.from_user.first_name
 
     if sender_id == receiver_id:
-        await message.reply_html("<b>You can't gift a slave to yourself!</b>")
+        await message.reply_html("<b>ʏᴏᴜ ᴄᴀɴ'ᴛ ɢɪғᴛ ᴀ ᴡᴀɪғᴜ ᴛᴏ ʏᴏᴜʀsᴇʟғ!</b>")
         return
 
     if len(message.text.split()) != 2:
-        await message.reply_html("<b>You need to provide a slave ID!</b>")
+        await message.reply_html("<b>ʏᴏᴜ ɴᴇᴇᴅ ᴛᴏ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴡᴀɪғᴜ ɪᴅ!</b>")
         return
 
     character_id = message.text.split()[1]
@@ -34,11 +34,11 @@ async def handle_gift_command(update: Update, context: CallbackContext):
     character = next((character for character in sender.get('characters', []) if isinstance(character, dict) and character.get('id') == character_id), None)
 
     if not character:
-        await message.reply_text("You don't have this slave in your collection!")
+        await message.reply_html("<b>ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴛʜɪs ᴡᴀɪғᴜ ɪɴ ʏᴏᴜʀ ᴄᴏʟʟᴇᴄᴛɪᴏɴ!</b>")
         return
 
     if sender_id in pending_gifts:
-        await message.reply_html("<b>You already have a pending gift. Please confirm or cancel it before initiating a new one.</b>")
+        await message.reply_html("<b>ʏᴏᴜ ᴀʟʀᴇᴀᴅʏ ʜᴀᴠᴇ ᴀ ᴘᴇɴᴅɪɴɢ ɢɪғᴛ. ᴘʟᴇᴀsᴇ ᴄᴏɴғɪʀᴍ ᴏʀ ᴄᴀɴᴄᴇʟ ɪᴛ ʙᴇғᴏʀᴇ ɪɴɪᴛɪᴀᴛɪɴɢ ᴀ ɴᴇᴡ ᴏɴᴇ.</b>")
         return
 
     pending_gifts[sender_id] = {
@@ -49,16 +49,16 @@ async def handle_gift_command(update: Update, context: CallbackContext):
     }
 
     caption = (
-        f"<b>Do you really want to gift this slave to {receiver_first_name}?</b>\n"
-        f"<b>Name: {character['name']}</b>\n"
-        f"<b>ID: {character['id']}</b>\n"
-        f"<b>Rarity: {character['rarity']}</b>"
+        f"<b>ᴅᴏ ʏᴏᴜ ʀᴇᴀʟʟʏ ᴡᴀɴᴛ ᴛᴏ ɢɪғᴛ ᴛʜɪs ᴡᴀɪғᴜ ᴛᴏ {receiver_first_name}?</b>\n"
+        f"<b>ɴᴀᴍᴇ: {character['name']}</b>\n"
+        f"<b>ɪᴅ: {character['id']}</b>\n"
+        f"<b>ʀᴀʀɪᴛʏ: {character['rarity']}</b>"
     )
 
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton("Confirm ✅", callback_data="confirm_gift")],
-            [InlineKeyboardButton("Cancel ❌", callback_data="cancel_gift")]
+            [InlineKeyboardButton("ᴄᴏɴғɪʀᴍ ✅", callback_data="confirm_gift")],
+            [InlineKeyboardButton("ᴄᴀɴᴄᴇʟ ❌", callback_data="cancel_gift")]
         ]
     )
 
@@ -94,7 +94,7 @@ async def handle_callback_query(update: Update, context: CallbackContext):
 
         del pending_gifts[sender_id]
 
-        await callback_query.message.edit_text(f"🎁 You have successfully gifted your slave to {gift['receiver_first_name']}!")
+        await callback_query.message.edit_text(f"<b>🎁 ʏᴏᴜ ʜᴀᴠᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ɢɪғᴛᴇᴅ ʏᴏᴜʀ ᴡᴀɪғᴜ ᴛᴏ</b> {gift['receiver_first_name']}!")
 
     elif callback_query.data == "cancel_gift":
         del pending_gifts[sender_id]
