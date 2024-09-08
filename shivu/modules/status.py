@@ -1,22 +1,46 @@
 from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-from shivu import shivuu
-from shivu import SUPPORT_CHAT,user_collection,collection
-from shivu import shivuu, SUPPORT_CHAT, user_collection, collection
-import os
+from shivu import shivuu, collection, user_collection, group_user_totals_collection
+import random
+import asyncio
 
 async def get_user_collection():
     return await user_collection.find({}).to_list(length=None)
 
-async def get_global_rank(user_id: int) -> int:
+async def get_progress_bar(user_waifus_count, total_waifus_count):
+    current = user_waifus_count
+    total = total_waifus_count
+    bar_width = 10
+
+    progress = current / total if total != 0 else 0
+    progress_percent = progress * 100
+
+    filled_width = int(progress * bar_width)
+    empty_width = bar_width - filled_width
+
+    progress_bar = "▰" * filled_width + "▱" * empty_width
+    status = f"{progress_bar}"
+    return status, progress_percent
+
+async def get_chat_top(chat_id: int, user_id: int) -> int:
     pipeline = [
-        {"$project": {
-            "id": 1,
-            "characters_count": {"$cond": {"if": {"$isArray": "$characters"}, "then": {"$size": "$characters"}, "else": 0}}
-        }},
+        {"$match": {"group_id": chat_id}},
+        {"$sort": {"count": -1}},
+        {"$limit": 10}
+    ]
+    cursor = group_user_totals_collection.aggregate(pipeline)
+    leaderboard_data = await cursor.to_list(length=None)
+    
+    for i, user in enumerate(leaderboard_data, start=1):
+        if user.get('user_id') == user_id:
+            return i
+    
+    return 0
+
+async def get_global_top(user_id: int) -> int:
+    pipeline = [
+        {"$project": {"id": 1, "characters_count": {"$size": {"$ifNull": ["$characters", []]}}}},
         {"$sort": {"characters_count": -1}}
     ]
-    
     cursor = user_collection.aggregate(pipeline)
     leaderboard_data = await cursor.to_list(length=None)
     
@@ -26,91 +50,62 @@ async def get_global_rank(user_id: int) -> int:
     
     return 0
 
-async def get_user_balance(user_id: int) -> int:
-    user_balance = await user_collection.find_one({'id': user_id}, projection={'balance': 1})
-    if user_balance:
-        return user_balance.get('balance', 0)
-    else:
-        return 0
-    
-async def get_user_info(user, already=False):
-    if not already:
-        user = await shivuu.get_users(user)
-    if not user.first_name:
-        return ["Deleted account", None]
-    
-    user_id = user.id
-    username = user.username
-    existing_user = await user_collection.find_one({'id': user_id})
-    first_name = user.first_name
-    mention = user.mention("Link")
-    global_rank = await get_global_rank(user_id)
-    global_count = await collection.count_documents({})
-    total_count = len(existing_user.get('characters', []))
-    photo_id = user.photo.big_file_id if user.photo else None
-    balance = await get_user_balance(user_id)  # New line to fetch user balance
-    global_coin_rank = await user_collection.count_documents({'balance': {'$gt': balance}}) + 1
-    
-    # Check if user has a pass
-    if existing_user.get('pass'):
-        has_pass = "✅"
-    else:
-        has_pass = "❌"
-    
-    # Fetch user's token balance
-    tokens = existing_user.get('tokens', 0)
-    
-    # Format balance and tokens with commas
-    balance_formatted = f"{balance:,}"
-    tokens_formatted = f"{tokens:,}"
-    
-    info_text = f"""
-「 ✨ 𝙃𝙐𝙉𝙏𝙀𝙍 𝙇𝙄𝘾𝙀𝙉𝙎𝙀 ✨ 」
-───────────────────
-{first_name}  [`{user_id}`]
-𝙐𝙎𝙀𝙍𝙉𝘼𝙈𝙀 : @{username}
-───────────────────
-𝙎𝙇𝘼𝙑𝙀𝙎 𝗖𝗢𝗨𝗡𝗧 : `{total_count}` / `{global_count}`
-𝙂𝙇𝙊𝘽𝘼𝙇 𝙍𝘼𝙉𝙆 : `{global_rank}`
-───────────────────
-𝙒𝙀𝘼𝙇𝙏𝙃 : ₩`{balance_formatted}`
-𝙂𝙇𝙊𝘽𝘼𝙇 𝙒𝙀𝘼𝙇𝙏𝙃 𝙍𝘼𝙉𝙆  : `{global_coin_rank}`
-───────────────────
-𝙋𝙖𝙨𝙨 : {has_pass}
-───────────────────
-𝙏𝙊𝙆𝙀𝙉𝙎 : `{tokens_formatted}`
-""" 
-    return info_text, photo_id
-
-@shivuu.on_message(filters.command("sinfo"))
-async def profile(client, message):
-    if message.reply_to_message:
-        user = message.reply_to_message.from_user.id
-    elif not message.reply_to_message and len(message.command) == 1:
-        user = message.from_user.id
-    elif not message.reply_to_message and len(message.command) != 1:
-        user = message.text.split(None, 1)[1]
-    existing_user = await user_collection.find_one({'id': user})
-    m = await message.reply_text("Geting Your Hunter License..")
+@shivuu.on_message(filters.command(["status", "mystatus"]))
+async def send_grabber_status(client, message):
     try:
-        info_text, photo_id = await get_user_info(user)
+        # Show loading animation
+        loading_message = await message.reply("🔄 Fetching Grabber Status...")
+
+        # Incrementally increase the number of dots in the loading message
+        for i in range(1, 6):
+            await asyncio.sleep(1)
+            await loading_message.edit_text("🔄 Fetching Grabber Status" + "." * i)
+
+        user_collection_data = await get_user_collection()
+        user_collection_count = len(user_collection_data)
+
+        user_id = message.from_user.id
+        user = await user_collection.find_one({'id': user_id})
+
+        if user:
+            total_count = len(user.get('characters', []))
+        else:
+            total_count = 0
+
+        total_waifus_count = await collection.count_documents({})
+
+        chat_top = await get_chat_top(message.chat.id, user_id)
+        global_top = await get_global_top(user_id)
+
+        progress_bar, progress_percent = await get_progress_bar(total_count, total_waifus_count)
+
+        grabber_status = (
+            f"╭──「 ✨ 𝙐𝙎𝙀𝙍 𝙋𝙍𝙊𝙁𝙄𝙇𝙀 ✨ 」\n"
+            f"├─➩ 🌸 𝙉𝘼𝙈𝙀: `{message.from_user.first_name}`\n"
+            f"├─➩ 🔩 User ID: `{message.from_user.id}`\n"
+            f"├─➩ 🍀 𝘾𝙃𝘼𝙍𝘼𝘾𝙏𝙀𝙍𝙎 𝗖𝗢𝗨𝗡𝗧 : `{total_count}`\n"
+            f"├─➩ 🍀 𝘾𝙃𝘼𝙍𝘼𝘾𝙏𝙀𝙍𝙎 𝗖𝗢𝗨𝗡𝗧 : `{total_count}/{total_waifus_count}` ({progress_percent:.3f}%)\n"
+            f"├─➩ ℹ️ 𝐄𝐱𝐩𝐞𝐫𝐢𝐞𝐧𝐜𝐞 𝐋𝐞𝐯𝐞𝐥 : {user_collection_count // 100 + 1}\n"
+            f"├─➩⚜️ 𝙋𝙍𝙊𝙂𝙍𝙀𝙎𝙎 𝘽𝘼𝙍: {progress_bar}\n"
+            f"╰         {progress_percent:.2f}% Complete\n"
+            f"╭──────────────────\n"
+            f"├─➩ 🌍  𝘾𝙃𝘼𝙏 𝙏𝙊𝙋 : `{chat_top}`\n"
+            f"├─➩ 🌎  𝙂𝙇𝙊𝘽𝘼𝙇 𝙏𝙊𝙋 : `{global_top}`\n"
+            f"╰──────────────────"
+        )
+
+        user_photo = await shivuu.download_media(message.from_user.photo.big_file_id)
+
+        await client.send_photo(
+            chat_id=message.chat.id,
+            photo=user_photo,
+            caption=grabber_status,
+        )
+
+        # Delete the loading message after sending the actual response
+        await loading_message.delete()
+
     except Exception as e:
-        print(f"Something Went Wrong {e}")
-        return await m.edit(f"Sorry something Went Wrong Report At @{SUPPORT_CHAT}")
-    
-    keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("Support",url=f"https://t.me/{SUPPORT_CHAT}")]
-    ])
-    reply_markup = InlineKeyboardMarkup(
-        [
-            [InlineKeyboardButton("Start Me in PM First", url=f"https://t.me/{shivuu.me.username}?start=True")]
-        ]
-    )
-    if photo_id is None:
-        return await m.edit(info_text, disable_web_page_preview=True, reply_markup=keyboard)
-    elif not existing_user:
-        return await m.edit(info_text, disable_web_page_preview=True, reply_markup=reply_markup)
-    photo = await shivuu.download_media(photo_id)
-    await message.reply_photo(photo, caption=info_text, reply_markup=keyboard)
-    await m.delete()
-    os.remove(photo)
+        print(f"Error: {e}")
+
+# lol
