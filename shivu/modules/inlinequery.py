@@ -172,22 +172,24 @@ elif '💞' in character['name']:
 # Add inline button for showing smashers
 button = InlineKeyboardMarkup(
     [[InlineKeyboardButton("Top Grabbes", callback_data=f"show_smashers_{character['id']}")]]
-        ) 
+)
 
-        results.append(
-            InlineQueryResultPhoto(
-                thumbnail_url=character['img_url'],
-                id=f"{character['id']}_{time.time()}",
-                photo_url=character['img_url'],
-                caption=caption,
-                parse_mode='HTML',
-                reply_markup=button
-            )
-        )
+results.append(
+    InlineQueryResultPhoto(
+        thumbnail_url=character['img_url'],
+        id=f"{character['id']}_{time.time()}",
+        photo_url=character['img_url'],
+        caption=caption,
+        parse_mode='HTML',
+        reply_markup=button
+    )
+)
 
-    await update.inline_query.answer(results, next_offset=next_offset, cache_time=5)
+# Answer the inline query
+await update.inline_query.answer(results, next_offset=next_offset, cache_time=5)
 
 
+# Function for handling the show smashers callback
 async def show_smashers_callback(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     character_id = query.data.split('_')[2]
