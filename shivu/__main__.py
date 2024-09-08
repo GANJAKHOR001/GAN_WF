@@ -204,7 +204,7 @@ async def guess(update: Update, context: CallbackContext) -> None:
         keyboard = [[InlineKeyboardButton(f"🪼 ʜᴀʀᴇᴍ", switch_inline_query_current_chat=f"collection.{user_id}")]]
 
 
-        await update.message.reply_text(f'Congratulations 🎊\n<b><a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a></b> You grabbed a new husbando!! ✅️\n\n🎀 𝙉𝙖𝙢𝙚: <code>{last_characters[chat_id]["name"]}</code>\n{last_characters[chat_id]["rarity"][0]} 𝙍𝙖𝙧𝙞𝙩𝙮: <code>{last_characters[chat_id]["rarity"][2:]}</code>\n⚡ 𝘼𝙣𝙞𝙢𝙚: <code>{last_characters[chat_id]["anime"]}</code>\n\n✧⁠ Character successfully added in your harem', parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard))
+        await update.message.reply_text(f'Congratulations 🎊\n<b><a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a></b> You grabbed a new waifu!! ✅️\n\n🎀 𝙉𝙖𝙢𝙚: <code>{last_characters[chat_id]["name"]}</code>\n{last_characters[chat_id]["rarity"][0]} 𝙍𝙖𝙧𝙞𝙩𝙮: <code>{last_characters[chat_id]["rarity"][2:]}</code>\n⚡ 𝘼𝙣𝙞𝙢𝙚: <code>{last_characters[chat_id]["anime"]}</code>\n\n✧⁠ Character successfully added in your harem', parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard))
 
     else:
         await update.message.reply_html('<b>ᴘʟᴇᴀsᴇ ᴡʀɪᴛᴇ ᴀ ᴄᴏʀʀᴇᴄᴛ ɴᴀᴍᴇ..❌</b>')
