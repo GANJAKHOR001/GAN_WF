@@ -20,9 +20,9 @@ async def harem(update: Update, context: CallbackContext, page=0) -> None:
     if not user:
         print(user)
         if update.message:
-            await update.message.reply_text('ʏᴏᴜ ʜᴀᴠᴇ ɴᴏᴛ ɢᴜᴇssᴇᴅ ᴀɴʏ ᴄʜᴀʀᴀᴄᴛᴇʀs ʏᴇᴛ.')
+            await update.message.reply_html('<b>ʏᴏᴜ ʜᴀᴠᴇ ɴᴏᴛ ɢᴜᴇssᴇᴅ ᴀɴʏ ᴄʜᴀʀᴀᴄᴛᴇʀs ʏᴇᴛ.</b>')
         else:
-            await update.callback_query.edit_message_text('ʏᴏᴜ ʜᴀᴠᴇ ɴᴏᴛ ɢᴜᴇssᴇᴅ ᴀɴʏ ᴄʜᴀʀᴀᴄᴛᴇʀs ʏᴇᴛ.')
+            await update.callback_query.edit_message_html('<b>ʏᴏᴜ ʜᴀᴠᴇ ɴᴏᴛ ɢʀᴀʙʙᴇᴅ ᴀɴʏ ᴄʜᴀʀᴀᴄᴛᴇʀs ʏᴇᴛ.</b>')
         return
     # Retrieve selected rarity from the user's document
     selected_rarity = user.get('selected_rarity')
@@ -48,7 +48,7 @@ async def harem(update: Update, context: CallbackContext, page=0) -> None:
     current_characters = unique_characters[page*15:(page+1)*15]
     current_grouped_characters = {k: list(v) for k, v in groupby(current_characters, key=lambda x: x['anime'])}
     for anime, characters in current_grouped_characters.items():
-        harem_message += f'\n𖤍 {anime} ｛{len(characters)}/{await collection.count_documents({"anime": anime})}｝\n'
+        harem_message += f'\n𖤍 <b>{anime}</b> ｛{len(characters)}/{await collection.count_documents({"anime": anime})}｝\n'
 
         harem_message += f'⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋\n'
         for character in characters:
@@ -78,34 +78,34 @@ async def harem(update: Update, context: CallbackContext, page=0) -> None:
         fav_character = next((c for c in user['characters'] if c['id'] == fav_character_id), None)
         if fav_character and 'img_url' in fav_character:
             if update.message:
-                await update.message.reply_photo(photo=fav_character['img_url'], caption=harem_message, reply_markup=reply_markup)
+                await update.message.reply_photo(photo=fav_character['img_url'], caption=harem_message, reply_markup=reply_markup, parse_mode='HTML') 
             else:
                 if update.callback_query.message.caption != harem_message:
                     await update.callback_query.edit_message_caption(caption=harem_message, reply_markup=reply_markup, parse_mode='HTML')
         else:
             if update.message:
-                await update.message.reply_text(harem_message, reply_markup=reply_markup)
+                await update.message.reply_text(harem_message, reply_markup=reply_markup, parse_mode'HTML')
             else:
                 if update.callback_query.message.text != harem_message:
-                    await update.callback_query.edit_message_text(harem_message, reply_markup=reply_markup)
+                    await update.callback_query.edit_message_text(harem_message, reply_markup=reply_markup, parse_mode='HTML')
     else:
         if user['characters']:
             random_character = random.choice(user['characters'])
             if 'img_url' in random_character:
                 if update.message:
-                    await update.message.reply_photo(photo=random_character['img_url'], caption=harem_message, reply_markup=reply_markup)
+                    await update.message.reply_photo(photo=random_character['img_url'], caption=harem_message, reply_markup=reply_markup, parse_mode='HTML')
                 else:
                     if update.callback_query.message.caption != harem_message:
-                        await update.callback_query.edit_message_caption(caption=harem_message, reply_markup=reply_markup)
+                        await update.callback_query.edit_message_caption(caption=harem_message, reply_markup=reply_markup, parse_mode='HTML')
             else:
                 if update.message:
-                    await update.message.reply_text(harem_message, reply_markup=reply_markup)
+                    await update.message.reply_text(harem_message, reply_markup=reply_markup, parse_mode='HTML')
                 else:
                     if update.callback_query.message.text != harem_message:
-                        await update.callback_query.edit_message_text(harem_message, reply_markup=reply_markup)
+                        await update.callback_query.edit_message_text(harem_message, reply_markup=reply_markup, parse_mode='HTML')
         else:
             if update.message:
-                await update.message.reply_text("ʏᴏᴜʀ ʟɪsᴛ ɪs ᴇᴍᴘᴛʏ :)")
+                await update.message.reply_HTML("<b>ʏᴏᴜʀ ʟɪsᴛ ɪs ᴇᴍᴘᴛʏ :)</b>")
 
 async def harem_callback(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
@@ -152,10 +152,10 @@ async def add_rarity(update: Update, context: CallbackContext) -> None:
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     image_url = "https://graph.org/file/4b0da20b223036b6c7989.jpg"
-    caption = f"{user_name} ᴘʟᴇᴀꜱᴇ ᴄʜᴏᴏꜱᴇ ʀᴀʀɪᴛʏ ᴛʜᴀᴛ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ꜱᴇᴛ ᴀꜱ ʜᴀʀᴇᴍ ᴍᴏᴅᴇ"
+    caption = f"<b>{user_name} ᴘʟᴇᴀꜱᴇ ᴄʜᴏᴏꜱᴇ ʀᴀʀɪᴛʏ ᴛʜᴀᴛ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ꜱᴇᴛ ᴀꜱ ʜᴀʀᴇᴍ ᴍᴏᴅᴇ</b>"
 
     # Send image with caption and markup keyboard
-    await context.bot.send_photo(chat_id=update.effective_chat.id, photo=image_url, caption=caption, reply_markup=reply_markup)
+    await context.bot.send_photo(chat_id=update.effective_chat.id, photo=image_url, caption=caption, reply_markup=reply_markup, parse_mode='HTML')
 
 
 
@@ -173,7 +173,7 @@ async def add_rarity_callback(update: Update, context: CallbackContext) -> None:
         await user_collection.update_one({'id': user_id}, {'$set': {'selected_rarity': 'Default'}})
 
         # Edit caption to show selected rarity
-        await query.message.edit_caption(caption="ʏᴏᴜ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ʜᴀʀᴇᴍ ᴍᴏᴅᴇ ᴀꜱ ᴅᴇꜰᴀᴜʟᴛ")
+        await query.message.edit_caption(caption="<b>ʏᴏᴜ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ʜᴀʀᴇᴍ ᴍᴏᴅᴇ ᴀꜱ ᴅᴇꜰᴀᴜʟᴛ</b>")
 
         rarities = ["🟢 Common", "🟣 Rare" , "🟡 Legendary", "💮 Special Edition", "🔮 Premium Edition","🎗️ Supreme"]
         # Arrange rarities in rows of two
