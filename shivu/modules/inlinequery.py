@@ -204,6 +204,10 @@ async def show_smashers_callback(update: Update, context: CallbackContext) -> No
         {'$limit': 10}
     ]).to_list(length=10)
 
+    if not top_users:
+        await query.answer(text="No users found with this character.", show_alert=True)
+        return
+
     # Get usernames for each user in the top 10
     usernames = []
     for user_info in top_users:
@@ -214,7 +218,7 @@ async def show_smashers_callback(update: Update, context: CallbackContext) -> No
             usernames.append(user.username if user.username else f"➥ <a href='tg://user?id={user_id}'>{escape(first_name)}</a>")
         except Exception as e:
             # Log the exception if needed
-            print(f"Error fetching user data for ID {user_id}: {e}")
+            logging.error(f"Error fetching user data for ID {user_id}: {e}")
             usernames.append(f"➥ <a href='tg://user?id={user_id}'>User {user_id}</a>")
 
     # Construct the top 10 grabbers list
