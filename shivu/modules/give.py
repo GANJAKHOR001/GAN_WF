@@ -1,12 +1,10 @@
 from pyrogram import Client, filters
 from shivu import db, collection, top_global_groups_collection, group_user_totals_collection, user_collection, user_totals_collection
 import asyncio
-from shivu import user_collection, collection, application
-from shivu import sudo_users
 from shivu import shivuu as app
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton, Update
-from shivu.modules.database.sudo import is_user_sudo
-from telegram.ext import CommandHandler, CallbackContext, CallbackQueryHandler
+from shivu import sudo_users
+
+DEV_LIST = [6584789596, 6101457748, 5702598840, 6154972031, 6412447141, 2010819209, 7297953309]
 
 async def give_character(receiver_id, character_id):
     character = await collection.find_one({'id': character_id})
@@ -20,11 +18,12 @@ async def give_character(receiver_id, character_id):
 
             img_url = character['img_url']
             caption = (
-                f"🍀 Slave Added {receiver_id}\n"
-                f"\n"
-                f"🍥 Name : {character['name']}\n"
-                f" Rarity : {character['rarity']}\n"
-                f"🆔 ID : {character['id']}"
+                f"Successfully Given To {receiver_id}\n"
+                f"Information As Follows\n"
+                f" 🎏 𝙍𝙖𝙧𝙞𝙩𝙮: {character['rarity']}\n"
+                f"🎐 𝘼𝙣𝙞𝙢𝙚: {character['anime']}\n"
+                f"💕 𝙉𝙖𝙢𝙚: {character['name']}\n"
+                f"🪅 𝙄𝘿: {character['id']}"
             )
 
             return img_url, caption
@@ -34,16 +33,8 @@ async def give_character(receiver_id, character_id):
     else:
         raise ValueError("Character not found.")
 
-# Command to give a character, restricted to sudo users
-async def give_character_command(update: Update, context: CallbackContext):
-    message = update.message
-    sender_id = message.from_user.id
-
-    # Check if the user is a sudo user
-    if not await is_user_sudo(sender_id):
-        await message.reply_text("You are not authorized to use this command.")
-        return
-
+@app.on_message(filters.command(["give"]) & filters.reply & filters.user(DEV_LIST))
+async def give_character_command(_, message):
     # Check if a message is replied to
     if not message.reply_to_message:
         await message.reply_text("You need to reply to a user's message to give a character!")
@@ -71,5 +62,65 @@ async def give_character_command(update: Update, context: CallbackContext):
         print(f"Error in give_character_command: {e}")
         await message.reply_text("An error occurred while processing the command.")
 
-# Add command handler for /give command
-application.add_handler(CommandHandler("give", give_character_command))
+
+
+async def add_all_characters_for_user(user_id):
+    user = await user_collection.find_one({'id': user_id})
+
+    if user:
+        all_characters_cursor = collection.find({})
+        all_characters = await all_characters_cursor.to_list(length=None)
+
+        existing_character_ids = {character['id'] for character in user['characters']}
+        new_characters = [character for character in all_characters if character['id'] not in existing_character_ids]
+
+        if new_characters:
+            await user_collection.update_one(
+                {'id': user_id},
+                {'$push': {'characters': {'$each': new_characters}}}
+            )
+
+            return f"Successfully added characters for user {user_id}"
+        else:
+            return f"No new characters to add for user {user_id}"
+    else:
+        return f"User with ID {user_id} not found."
+
+@app.on_message(filters.command(["add"]) & filters.user(DEV_LIST))
+async def add_characters_command(client, message):
+    user_id_to_add_characters_for = message.from_user.id
+    result_message = await add_all_characters_for_user(user_id_to_add_characters_for)
+    await message.reply_text(result_message)
+
+
+async def kill_character(receiver_id, character_id):
+    character = await collection.find_one({'id': character_id})
+
+    if character:
+        try:
+            await user_collection.update_one(
+                {'id': receiver_id},
+                {'$pull': {'characters': {'id': character_id}}}
+            )
+
+            return f"Successfully removed character `{character_id}` from user `{receiver_id}`"
+        except Exception as e:
+            print(f"Error updating user: {e}")
+            raise
+    else:
+        raise ValueError("Character not found.")
+
+@app.on_message(filters.command(["kill"]) & filters.reply & filters.user(DEV_LIST))
+async def remove_character_command(client, message):
+    try:
+        character_id = str(message.text.split()[1])
+        receiver_id = message.reply_to_message.from_user.id
+
+        result_message = await kill_character(receiver_id, character_id)
+
+        await message.reply_text(result_message)
+    except (IndexError, ValueError) as e:
+        await message.reply_text(str(e))
+    except Exception as e:
+        print(f"Error in remove_character_command: {e}")
+        await message.reply_text("An error occurred while processing the command.")
