@@ -1,11 +1,10 @@
-#FLEXdub_Official
 import urllib.request
 from pymongo import ReturnDocument
+
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext
-from shivu.modules.database.sudo import is_user_sudo
-from shivu import application, collection, db, CHARA_CHANNEL_ID, SUPPORT_CHAT
 
+from shivu import application, sudo_users, collection, db, CHARA_CHANNEL_ID, SUPPORT_CHAT
 
 WRONG_FORMAT_TEXT = """Wrong ❌️ format...  eg. /upload Img_url muzan-kibutsuji Demon-slayer 3 1
 
@@ -15,26 +14,22 @@ Use rarity number accordingly:
 rarity_map = 1 (🟢 Common), 2 (🟣 Rare), 3 (🟡 Legendary), 4 (💮 Special Edition), 5 (🔮 Premium Edition), 6 (🎗️ Supreme)
 
 Use event number accordingly:
-event_map = 1 (🏖 Summer), 2 (👘 Kimono), 3 (☃️ Winter), 4 (💞 Valentine), 5 (🎒 School), 6 (🎃 Halloween), 7 (🎮 Game), 8 (🎩 Tuxedo), 9 (👥 Duo), 10 (🧹 Made), 11 (☔ Monsoon), 12 (🐰 Bunny),  13 (🤝🏻 Group), 14 (🥻 Saree), 15 (🎄 Cristmas), 16 (👑 Lord), 17 (None)"""
+event_map = 1 (🏖 Summer), 2 (👘 Kimono), 3 (❄ Winter), 4 (💞 Valentine), 5 (🏫 School), 6 (🎃 Halloween), 7 (👗 Cosplay), 8 (🎩 Tuxedo), 9 (👥 Duo), 10 (💫 Magic Hour), 11 (⛈ Rain), 12 (🤝🏻 Group), 13 (None)"""
 
 EVENT_MAPPING = {
     1: {"name": "𝒔𝒖𝒎𝒎𝒆𝒓", "sign": "🏖"},
     2: {"name": "𝑲𝒊𝒎𝒐𝒏𝒐", "sign": "👘"},
-    3: {"name": "𝑾𝒊𝒏𝒕𝒆𝒓", "sign": "☃️"},
+    3: {"name": "𝑾𝒊𝒏𝒕𝒆𝒓", "sign": "❄"},
     4: {"name": "𝑽𝒂𝒍𝒆𝒏𝒕𝒊𝒏𝒆", "sign": "💞"},
-    5: {"name": "𝑺𝒄𝒉𝒐𝒐𝒍", "sign": "🎒"},
+    5: {"name": "𝑺𝒄𝒉𝒐𝒐𝒍", "sign": "🏫"},
     6: {"name": "𝑯𝒂𝒍𝒍𝒐𝒘𝒆𝒆𝒏", "sign": "🎃"},
-    7: {"name": "𝑮𝒂𝒎𝒆", "sign": "🎮"},
+    7: {"name": "𝐶𝑂𝑆𝑃𝐿𝐴𝑌", "sign": "👗"},
     8: {"name": "𝑻𝒖𝒙𝒆𝒅𝒐", "sign": "🎩"},
     9: {"name": "𝐃𝐮𝐨", "sign": "👥"},
-    10: {"name": "𝑴𝒂𝒅𝒆", "sign": "🧹"},
-    11: {"name": "𝑴𝒐𝒏𝒔𝒐𝒐𝒏𝑛", "sign": "☔"},
-    12: {"name": "𝑩𝒖𝒏𝒏𝒚", "sign": "🐰"},
-    13: {"name": "𝐆𝐫𝐨𝐮𝐩", "sign": "🤝🏻"},
-    14: {"name": "𝑺𝒂𝒓𝒆𝒆", "sign": "🥻"},
-    15: {"name": "𝑪𝒓𝒊𝒔𝒕𝒎𝒂𝒔", "sign": "🎄"},
-    16: {"name": "𝑳𝒐𝒓𝒅", "sign": "👑"},
-    17: None  # Skip event
+    10: {"name": "𝑀𝐴𝐆𝐼𝐶_𝐻𝑂𝑈𝑅", "sign": "💫"},
+    11: {"name": "𝑅𝑎𝑖𝑛", "sign": "⛈"},
+    12: {"name": "𝐆𝐫𝐨𝐮𝐩", "sign": "🤝🏻"},
+    13: None  # Skip event
 }
 
 
@@ -106,7 +101,7 @@ async def upload(update: Update, context: CallbackContext) -> None:
         except:
             await collection.insert_one(character)
             update.effective_message.reply_text("Character Added but no Database Channel Found, Consider adding one.")
-
+        
     except Exception as e:
         await update.message.reply_text(f'Character Upload Unsuccessful. Error: {str(e)}\nIf you think this is a source error, forward to: {SUPPORT_CHAT}')
 
@@ -122,11 +117,11 @@ async def delete(update: Update, context: CallbackContext) -> None:
             await update.message.reply_text('Incorrect format... Please use: /delete ID')
             return
 
-
+        
         character = await collection.find_one_and_delete({'id': args[0]})
 
         if character:
-
+            
             await context.bot.delete_message(chat_id=CHARA_CHANNEL_ID, message_id=character['message_id'])
             await update.message.reply_text('DONE')
         else:
@@ -171,21 +166,17 @@ async def update(update: Update, context: CallbackContext) -> None:
             event_map = {
                 1: {"name": "𝒔𝒖𝒎𝒎𝒆𝒓", "sign": "🏖"},
                 2: {"name": "𝑲𝒊𝒎𝒐𝒏𝒐", "sign": "👘"},
-                3: {"name": "𝑾𝒊𝒏𝒕𝒆𝒓", "sign": "☃️"},
+                3: {"name": "𝑾𝒊𝒏𝒕𝒆𝒓", "sign": "❄"},
                 4: {"name": "𝑽𝒂𝒍𝒆𝒏𝒕𝒊𝒏𝒆", "sign": "💞"},
-                5: {"name": "𝑺𝒄𝒉𝒐𝒐𝒍", "sign": "🎒"},
+                5: {"name": "𝑺𝒄𝒉𝒐𝒐𝒍", "sign": "🏫"},
                 6: {"name": "𝑯𝒂𝒍𝒍𝒐𝒘𝒆𝒆𝒏", "sign": "🎃"},
-                7: {"name": "𝐶𝑂𝑆𝑃𝐿𝐴𝑌", "sign": "🎮"},
+                7: {"name": "𝐶𝑂𝑆𝑃𝐿𝐴𝑌", "sign": "👗"},
                 8: {"name": "𝑻𝒖𝒙𝒆𝒅𝒐", "sign": "🎩"},
                 9: {"name": "𝐃𝐮𝐨", "sign": "👥"},
-                10: {"name": "𝑴𝒂𝒅𝒆", "sign": "🧹"},
-                11: {"name": "𝑴𝒐𝒏𝒔𝒐𝒐𝒏", "sign": "☔"},
-                12: {"name": "𝑩𝒖𝒏𝒏𝒚", "sign": "🐰"},
-                13: {"name": "𝐆𝐫𝐨𝐮𝐩", "sign": "🤝🏻"},
-                14: {"name": "𝑺𝒂𝒓𝒆𝒆", "sign": "🥻"},
-                15: {"name": "𝑪𝒓𝒊𝒔𝒕𝒎𝒂𝒔", "sign": "🎄"},
-                16: {"name": "𝑳𝒐𝒓𝒅", "sign": "👑"},
-                17: {"name": None, "sign": None}
+                10: {"name": "𝑀𝐴𝐺𝐼𝐶_𝐻𝑂𝑈𝑅", "sign": "💫"},
+                11: {"name": "𝑅𝑎𝑖𝑛", "sign": "⛈"},
+                12: {"name": "𝐆𝐫𝐨𝐮𝐩", "sign": "🤝🏻"},
+                13: {"name": None, "sign": None}
             }
             try:
                 new_value = event_map[int(args[2])]
