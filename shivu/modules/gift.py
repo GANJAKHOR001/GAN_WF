@@ -94,7 +94,7 @@ async def handle_callback_query(update: Update, context: CallbackContext):
 
         del pending_gifts[sender_id]
 
-        await callback_query.message.edit_text(f"<b>🎁 ʏᴏᴜ ʜᴀᴠᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ɢɪғᴛᴇᴅ ʏᴏᴜʀ ᴡᴀɪғᴜ ᴛᴏ</b> {gift['receiver_first_name']}!")
+        await callback_query.message.edit_html(f"<b>🎁 ʏᴏᴜ ʜᴀᴠᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ɢɪғᴛᴇᴅ ʏᴏᴜʀ ᴡᴀɪғᴜ ᴛᴏ</b> {gift['receiver_first_name']}!")
 
     elif callback_query.data == "cancel_gift":
         del pending_gifts[sender_id]
