@@ -62,7 +62,7 @@ async def message_counter(update: Update, context: CallbackContext) -> None:
                     return
                 else:
 
-                    await update.message.reply_text(f"⚠️ 𝘿𝙤𝙣'𝙩 𝙎𝙥𝙖𝙢 {update.effective_user.first_name}...\n𝙔𝙤𝙪𝙧 𝙈𝙚𝙨𝙨𝙖𝙜𝙚𝙨 𝙒𝙞𝙡𝙡 𝙗𝙚 𝙞𝙜𝙣𝙤𝙧𝙚𝙙 𝙛𝙤𝙧 10 𝙈𝙞𝙣𝙪𝙩𝙚𝙨...")
+                    await update.message.reply_html(f"<b>ᴅᴏɴ'ᴛ 𝗌ᴘᴀᴍ</b> {update.effective_user.first_name}...\n<b>ʏᴏᴜʀ ᴍᴇssᴀɢᴇs ᴡɪʟʟ ʙᴇ ɪɢɴᴏʀᴇᴅ ғᴏʀ 𝟷𝟶 ᴍɪɴᴜᴛᴇs...!!</b>")
                     warned_users[user_id] = time.time()
                     return
         else:
@@ -121,13 +121,13 @@ async def guess(update: Update, context: CallbackContext) -> None:
         return
 
     if chat_id in first_correct_guesses:
-        await update.message.reply_text(f'🚫 𝙒ᴀɪғᴜ ᴀʟʀᴇᴀᴅʏ ɢʀᴀʙʙᴇᴅ ʙʏ 𝙨ᴏᴍᴇᴏɴᴇ ᴇʟ𝙨ᴇ ⚡, 𝘽ᴇᴛᴛᴇʀ 𝙇ᴜᴄᴋ 𝙉ᴇ𝙭ᴛ 𝙏ɪᴍᴇ')
+        await update.message.reply_html(f'<b>🚫ᴡᴀɪғᴜ ᴀʟʀᴇᴀᴅʏ ɢʀᴀʙʙᴇᴅ ʙʏ sᴏᴍᴇᴏɴᴇ ᴇʟsᴇ ⚡. ʙᴇᴛᴛᴇʀ ʟᴜᴄᴋ ɴᴇxᴛ ᴛɪᴍᴇ..!!</b>')
         return
 
     guess = ' '.join(context.args).lower() if context.args else ''
 
     if "()" in guess or "&" in guess.lower():
-        await update.message.reply_text("𝙉𝙖𝙝𝙝 𝙔𝙤𝙪 𝘾𝙖𝙣'𝙩 𝙪𝙨𝙚 𝙏𝙝𝙞𝙨 𝙏𝙮𝙥𝙚𝙨 𝙤𝙛 𝙬𝙤𝙧𝙙𝙨 ❌️")
+        await update.message.reply_html("<b>ɴᴀʜʜ ʏᴏᴜ ᴄᴀɴ'ᴛ ᴜsᴇ ᴛʜɪs ᴛʏᴘᴇs ᴏғ ᴡᴏʀᴅs...❌</b>")
         return
 
 
@@ -207,13 +207,13 @@ async def guess(update: Update, context: CallbackContext) -> None:
         await update.message.reply_text(f'<b><a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a></b> Congratulations 🎊 You grabbed a new Waifu !!✅\n\n🎀 𝙉𝙖𝙢𝙚: <code>{last_characters[chat_id]["name"]}</code> \n⚡ 𝘼𝙣𝙞𝙢𝙚: <code>{last_characters[chat_id]["anime"]}</code> \n{last_characters[chat_id]["rarity"][0]} 𝙍𝙖𝙧𝙞𝙩𝙮: <code>{last_characters[chat_id]["rarity"][2:]}</code>\n\n✧⁠ Character successfully added in your harem', parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard))
 
     else:
-        await update.message.reply_text('𝙋𝙡𝙚𝙖𝙨𝙚 𝙒𝙧𝙞𝙩𝙚 𝘾𝙤𝙧𝙧𝙚𝙘𝙩 𝙉𝙖𝙢𝙚... ❌️')
+        await update.message.reply_html('<b>ᴘʟᴇᴀsᴇ ᴡʀɪᴛᴇ ᴀ ᴄᴏʀʀᴇᴄᴛ ɴᴀᴍᴇ..❌</b>')
 
 async def fav(update: Update, context: CallbackContext) -> None:
     user_id = update.effective_user.id
 
     if not context.args:
-        await update.message.reply_text('𝙋𝙡𝙚𝙖𝙨𝙚 𝙥𝙧𝙤𝙫𝙞𝙙𝙚 𝙒𝘼𝙄𝙁𝙐 𝙞𝙙...')
+        await update.message.reply_html('<b>ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴡᴀɪғᴜ ɪᴅ....!!</b>')
         return
 
     character_id = context.args[0]
@@ -221,19 +221,19 @@ async def fav(update: Update, context: CallbackContext) -> None:
     # Find the user in the database
     user = await user_collection.find_one({'id': user_id})
     if not user:
-        await update.message.reply_text('𝙔𝙤𝙪 𝙝𝙖𝙫𝙚 𝙣𝙤𝙩 𝙂𝙤𝙩 𝘼𝙣𝙮 𝙒𝘼𝙄𝙁𝙐 𝙮𝙚𝙩...')
+        await update.message.reply_html('<b>ʏᴏᴜ ʜᴀᴠᴇ ɴᴏᴛ ɢᴏᴛ ᴀɴʏ ᴡᴀɪғᴜ ʏᴇᴛ..!</b>')
         return
 
     # Find the waifu in the user's character list
     character = next((c for c in user['characters'] if c['id'] == character_id), None)
     if not character:
-        await update.message.reply_text('𝙏𝙝𝙞𝙨 𝙒𝘼𝙄𝙁𝙐 𝙞𝙨 𝙉𝙤𝙩 𝙄𝙣 𝙮𝙤𝙪𝙧 𝙒𝘼𝙄𝙁𝙐 𝙡𝙞𝙨𝙩')
+        await update.message.reply_html('<b>ᴛʜɪs ᴡᴀɪғᴜ ɪs ɴᴏᴛ ɪɴ ʏᴏᴜʀ ʜᴀʀᴇᴍ ʟɪsᴛ</b>')
         return
 
     # Create inline buttons for confirmation
     buttons = [
-        [InlineKeyboardButton("Yes", callback_data=f"yes_{character_id}"), 
-         InlineKeyboardButton("No", callback_data=f"no_{character_id}")]
+        [InlineKeyboardButton("🟢 Yes", callback_data=f"yes_{character_id}"), 
+         InlineKeyboardButton("🔴 No", callback_data=f"no_{character_id}")]
     ]
     reply_markup = InlineKeyboardMarkup(buttons)
 
@@ -257,14 +257,14 @@ async def handle_yes(update: Update, context: CallbackContext) -> None:
     # Update the user's favorites with the selected waifu
     await user_collection.update_one({'id': user_id}, {'$set': {'favorites': [character_id]}})
 
-    await query.edit_message_caption(caption="Waifu marked as favorite!")
+    await query.edit_message_html(f="<b>ᴡᴀɪғᴜ ʜᴀs ʙᴇᴇɴ sᴜᴄᴄᴇssғᴜʟʟʏ sᴇᴛ ᴀs ᴀ ғᴀᴠᴏʀɪᴛᴇ!</b>")
 
 
 # Callback handler for when the user clicks 'No'
 async def handle_no(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     await query.answer("Okay, no worries!")
-    await query.edit_message_caption(caption="Action canceled.")
+    await query.edit_message_caption(caption="canceled.")
 
 
 
