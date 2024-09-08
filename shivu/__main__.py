@@ -257,7 +257,7 @@ async def handle_yes(update: Update, context: CallbackContext) -> None:
     # Update the user's favorites with the selected waifu
     await user_collection.update_one({'id': user_id}, {'$set': {'favorites': [character_id]}})
 
-    await query.edit_message_html(f="<b>ᴡᴀɪғᴜ ʜᴀs ʙᴇᴇɴ sᴜᴄᴄᴇssғᴜʟʟʏ sᴇᴛ ᴀs ᴀ ғᴀᴠᴏʀɪᴛᴇ!</b>")
+    await query.edit_message_caption(caption="<b>ᴡᴀɪғᴜ ʜᴀs ʙᴇᴇɴ sᴜᴄᴄᴇssғᴜʟʟʏ sᴇᴛ ᴀs ᴀ ғᴀᴠᴏʀɪᴛᴇ!</b>", parse_mode="HTML")
 
 
 # Callback handler for when the user clicks 'No'
