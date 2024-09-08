@@ -70,14 +70,14 @@ async def inlinequery(update: Update, context: CallbackContext) -> None:
             user_character_count = sum(c['id'] == character['id'] for c in user['characters'])
             user_anime_characters = sum(c['anime'] == character['anime'] for c in user['characters'])
             caption = (
-                f"<b> Lᴏᴏᴋ Aᴛ <a href='tg://user?id={user['id']}'>{escape(user.get('first_name', user['id']))}</a>'s Hᴜsʙᴀɴᴅᴏ....!!</b>\n\n"
+                f"<b> Lᴏᴏᴋ Aᴛ <a href='tg://user?id={user['id']}'>{escape(user.get('first_name', user['id']))}</a>'s ᴡᴀɪғᴜ....!!</b>\n\n"
                 f"<b>{character['id']}:</b> {character['name']} x{user_character_count}\n"
                 f"<b>{character['anime']}</b> {user_anime_characters}/{anime_characters}\n"
                 f"﹙<b>{character['rarity'][0]} 𝙍𝘼𝙍𝙄𝙏𝙔:</b> {character['rarity'][2:]}﹚\n"
             )
         else:
             caption = (
-                f"<b>Lᴏᴏᴋ Aᴛ Tʜɪs Hᴜsʙᴀɴᴅᴏ....!!</b>\n\n"
+                f"<b>Lᴏᴏᴋ Aᴛ Tʜɪs ᴡᴀɪғᴜ....!!</b>\n\n"
                 f"<b>{character['id']}:</b> {character['name']}\n"
                 f"<b>{character['anime']}</b>\n"
                 f"﹙<b>{character['rarity'][0]} 𝙍𝘼𝙍𝙄𝙏𝙔:</b> {character['rarity'][2:]}﹚\n"
