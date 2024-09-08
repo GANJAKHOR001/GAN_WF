@@ -14,16 +14,16 @@ async def handle_trade_command(update: Update, context: CallbackContext):
     sender_id = message.from_user.id
 
     if not message.reply_to_message:
-        await message.reply_html("<b>You need to reply to a user's message to trade a slave!</b>")
+        await message.reply_html("<b>ʏᴏᴜ ɴᴇᴇᴅ ᴛᴏ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ's ᴍᴇssᴀɢᴇ ᴛᴏ ᴛʀᴀᴅᴇ ᴀ ᴡᴀɪғᴜ!</b>")
         return
 
     receiver_id = message.reply_to_message.from_user.id
     if sender_id == receiver_id:
-        await message.reply_html("<b>You can't trade a slave with yourself!</b>")
+        await message.reply_html("<b>ʏᴏᴜ ᴄᴀɴ'ᴛ ᴛʀᴀᴅᴇ ᴀ ᴡᴀɪғᴜ ᴡɪᴛʜ ʏᴏᴜʀsᴇʟғ!</b>")
         return
 
     if len(context.args) != 2:
-        await message.reply_html("<b>You need to provide two slave IDs!</b>")
+        await message.reply_html("<b>ʏᴏᴜ ɴᴇᴇᴅ ᴛᴏ ᴘʀᴏᴠɪᴅᴇ ᴛᴡᴏ ᴡᴀɪғᴜ IDs!</b>")
         return
 
     sender_character_id, receiver_character_id = context.args[0], context.args[1]
@@ -33,24 +33,24 @@ async def handle_trade_command(update: Update, context: CallbackContext):
 
     # Ensure 'characters' is a list
     if not isinstance(sender.get('characters'), list):
-        await message.reply_html("<b>Your characters data is corrupted!</b>")
+        await message.reply_html("<b>ʏᴏᴜʀ ᴄʜᴀʀᴀᴄᴛᴇʀs ᴅᴀᴛᴀ ɪs ᴄᴏʀʀᴜᴘᴛᴇᴅ!</b>")
         return
     if not isinstance(receiver.get('characters'), list):
-        await message.reply_html("<b>The other user's characters data is corrupted!</b>")
+        await message.reply_html("<b>ᴛʜᴇ ᴏᴛʜᴇʀ ᴜsᴇʀ's ᴄʜᴀʀᴀᴄᴛᴇʀs ᴅᴀᴛᴀ ɪs ᴄᴏʀʀᴜᴘᴛᴇᴅ!</b>")
         return
 
     sender_character = next((character for character in sender['characters'] if character['id'] == sender_character_id), None)
     receiver_character = next((character for character in receiver['characters'] if character['id'] == receiver_character_id), None)
 
     if not sender_character:
-        await message.reply_text("<b>You don't have the slave you're trying to trade!</b>")
+        await message.reply_text("<b>ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴛʜᴇ ᴡᴀɪғᴜ ʏᴏᴜ'ʀᴇ ᴛʀʏɪɴɢ ᴛᴏ ᴛʀᴀᴅᴇ!</b>")
         return
     if not receiver_character:
-        await message.reply_text("<b>The other user doesn't have the slave they're trying to trade!</b>")
+        await message.reply_text("<b>ᴛʜᴇ ᴏᴛʜᴇʀ ᴜsᴇʀ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴛʜᴇ ᴡᴀɪғᴜ ᴛʜᴇʏ'ʀᴇ ᴛʀʏɪɴɢ ᴛᴏ ᴛʀᴀᴅᴇ!</b>")
         return
 
     if (sender_id, receiver_id) in pending_trades:
-        await message.reply_text("<b>There is already a pending trade between you and this user.</b>")
+        await message.reply_text("<b>ᴛʜᴇʀᴇ ɪs ᴀʟʀᴇᴀᴅʏ ᴀ ᴘᴇɴᴅɪɴɢ ᴛʀᴀᴅᴇ ʙᴇᴛᴡᴇᴇɴ ʏᴏᴜ ᴀɴᴅ ᴛʜɪs ᴜsᴇʀ.</b>")
         return
 
     pending_trades[(sender_id, receiver_id)] = {
@@ -66,7 +66,7 @@ async def handle_trade_command(update: Update, context: CallbackContext):
     )
 
     mention = mention_html(message.reply_to_message.from_user.id, message.reply_to_message.from_user.first_name)
-    await message.reply_html(f"{mention}, do you accept this trade?", reply_markup=keyboard)
+    await message.reply_html(f"{mention}, <b>do you accept this trade?</b>", reply_markup=keyboard)
 
 async def on_callback_query(update: Update, context: CallbackContext):
     callback_query = update.callback_query
@@ -115,7 +115,7 @@ async def on_callback_query(update: Update, context: CallbackContext):
         del pending_trades[(sender_id, receiver_id)]
 
         mention = mention_html(callback_query.message.reply_to_message.from_user.id, callback_query.message.reply_to_message.from_user.first_name)
-        await callback_query.message.edit_text(f"🎁 You have successfully traded your slave!")
+        await callback_query.message.edit_html(f"🎁<b> ʏᴏᴜ ʜᴀᴠᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴛʀᴀᴅᴇᴅ ʏᴏᴜʀ ᴡᴀɪғᴜ!</b>")
 
     elif callback_query.data == "cancel_trade":
         del pending_trades[(sender_id, receiver_id)]
