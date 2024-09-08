@@ -126,7 +126,7 @@ async def show_grabbers_callback(update: Update, context: CallbackContext) -> No
         grabbers_text += f'{i}. <a href="https://t.me/{username}"><b>{first_name}</b></a> ➾ <b>{user["count"]}</b>\n'
 
     # Editing the message (text or caption)
-    if query.message.caption:
+    if query.message.text:
         await query.edit_message_caption(caption=query.message.caption + grabbers_text, parse_mode='HTML')
     else:
         await query.edit_message_text(text=query.message.text + grabbers_text, parse_mode='HTML')
