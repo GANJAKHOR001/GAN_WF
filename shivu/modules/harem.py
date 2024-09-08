@@ -84,7 +84,7 @@ async def harem(update: Update, context: CallbackContext, page=0) -> None:
                     await update.callback_query.edit_message_caption(caption=harem_message, reply_markup=reply_markup, parse_mode='HTML')
         else:
             if update.message:
-                await update.message.reply_text(harem_message, reply_markup=reply_markup, parse_mode'HTML')
+                await update.message.reply_text(harem_message, reply_markup=reply_markup, parse_mode='HTML')
             else:
                 if update.callback_query.message.text != harem_message:
                     await update.callback_query.edit_message_text(harem_message, reply_markup=reply_markup, parse_mode='HTML')
@@ -129,7 +129,7 @@ async def add_rarity(update: Update, context: CallbackContext) -> None:
 
 
     if not user:
-        await update.message.reply_text("You haven't caught any characters yet.")
+        await update.message.reply_html("<b>You haven't caught any characters yet.</b>")
         return
 
     rarities = ["🟢 Common", "🟣 Rare" , "🟡 Legendary", "💮 Spacial Edition", "🔮 Premium Edition", "🎗️ Supreme"]
