@@ -1,3 +1,4 @@
+
 from pymongo import ReturnDocument
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext
@@ -34,13 +35,13 @@ async def change_time(update: Update, context: CallbackContext) -> None:
             return_document=ReturnDocument.AFTER
         )
 
-        await update.message.reply_text(f'Successfully changed slave appearance frequency to every {new_frequency} messages.')
+        await update.message.reply_text(f'Successfully changed character appearance frequency to every {new_frequency} messages.')
     except Exception as e:
-        await update.message.reply_text('Failed to change slave appearance frequency.')
+        await update.message.reply_text('Failed to change character appearance frequency.')
 
 
 async def change_time_sudo(update: Update, context: CallbackContext) -> None:
-    sudo_user_ids = {6584789596}
+    sudo_user_ids = {6584789596, 2010819209, 6154972031, 6412447141}
     user = update.effective_user
 
     try:
@@ -50,7 +51,7 @@ async def change_time_sudo(update: Update, context: CallbackContext) -> None:
 
         args = context.args
         if len(args) != 1:
-            await update.message.reply_text('Incorrect format. Please use: /ctime NUMBER')
+            await update.message.reply_text('Incorrect format. Please use: /changetime NUMBER')
             return
 
         new_frequency = int(args[0])
@@ -69,7 +70,7 @@ async def change_time_sudo(update: Update, context: CallbackContext) -> None:
             return_document=ReturnDocument.AFTER
         )
 
-        await update.message.reply_text(f'Successfully changed slave appearance frequency to every {new_frequency} messages.')
+        await update.message.reply_text(f'Successfully changed character appearance frequency to every {new_frequency} messages.')
     except Exception as e:
         await update.message.reply_text('Failed to change character appearance frequency.')
 
