@@ -4,7 +4,7 @@ import os
 
 MONGO_URI = os.getenv("mongodb+srv://Epic2:w85NP8dEHmQxA5s7@cluster0.tttvsf9.mongodb.net/?retryWrites=true&w=majority")
 DB_NAME = os.getenv("DB_NAME", "GRABBING_YOUR_WAIFU")
-COLLECTION_NAME = "users"
+COLLECTION_NAME = "anime_characters_lol"
 
 client = MongoClient(MONGO_URI)
 db = client[DB_NAME]
