@@ -102,7 +102,7 @@ f"<b>{character['id']}:</b> {character['name']} x{user_character_count}\n"
                 f"<b>Lᴏᴏᴋ Aᴛ Tʜɪs Waifu....!!</b>\n\n"
                 f"<b>{character['id']}:</b> {character['name']}\n"
                 f"<b>{character['anime']}</b>\n"
-                f"﹙<b>{character['rarity'][0]} 𝙍𝘼𝙍𝙄𝙏𝙔:</b> {character['rarity'][2:]}﹚\n\n"
+                f"﹙<b>{character['rarity'][0]} 𝙍𝘼𝙍𝙄𝙏𝙔:</b> {character['rarity'][2:]}﹚\n"
             )
 
         # Create Inline Keyboard for Top 10 Grabbers for this specific character
@@ -159,7 +159,7 @@ async def top10_grabbers_callback(update: Update, context: CallbackContext) -> N
         ]).to_list(length=10)
 
         if top_grabbers:
-            grabbers_text = f"<b>Top 10 Grabbers for Character {character_id}:</b>\n\n"
+            grabbers_text = f"<b>ᴛᴏᴘ 𝟷𝟶 ɢʀᴀʙʙᴇʀs ᴏғ ᴛʜɪs ᴡᴀɪғᴜ:</b>\n\n"
             for i, user in enumerate(top_grabbers, start=1):
                 username = user.get('username', 'Unknown') or 'Unknown'
                 first_name = user.get('first_name', 'Unknown')
