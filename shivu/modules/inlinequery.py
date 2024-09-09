@@ -135,7 +135,7 @@ f"<b>{character['id']}:</b> {character['name']} x{user_character_count}\n"
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(name)
+logger = logging.getLogger(__name__)
 
 async def top10_grabbers_callback(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
