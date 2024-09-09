@@ -15,7 +15,7 @@ Use rarity number accordingly:
 rarity_map = 1 (🟢 Common), 2 (🟣 Rare), 3 (🟡 Legendary), 4 (💮 Special Edition), 5 (🔮 Premium Edition), 6 (🎗️ Supreme)
 
 Use event number accordingly:
-event_map = 1 (🏖 Summer), 2 (👘 Kimono), 3 (☃️ Winter), 4 (💞 Valentine), 5 (🎒 School), 6 (🎃 Halloween), 7 (🎮 Game), 8 (🎩 Tuxedo), 9 (👥 Duo), 10 (🧹 Made), 11 (☔ Monsoon), 12 (🐰 Bunny),  13 (🤝🏻 Group), 14 (🥻 Saree), 15 (🎄 Cristmas), 16 (👑 Lord), 17 (None)"""
+event_map = 1 (🏖 Summer), 2 (👘 Kimono), 3 (☃️ Winter), 4 (💞 Valentine), 5 (🎒 School), 6 (🎃 Halloween), 7 (🎮 Game), 8 (🎩 Tuxedo), 9 (👥 Duo), 10 (🧹 Made), 11 (☔ Monsoon), 12 (🐰 Bunny),  13 (🤝🏻 Group), 14 (🥻 Saree), 15 (🎄 Cristmas), 16 (💐 Groom), 17 (🩺 Nurse), 18 (💍 Wedding), 19 (🎊 Cheerleaders), 20 (⚽ Soccer), 21 (🏀 Basketball), 22 (👑 Lord), 23 (None)"""
 
 EVENT_MAPPING = {
     1: {"name": "𝒔𝒖𝒎𝒎𝒆𝒓", "sign": "🏖"},
@@ -33,8 +33,14 @@ EVENT_MAPPING = {
     13: {"name": "𝐆𝐫𝐨𝐮𝐩", "sign": "🤝🏻"},
     14: {"name": "𝑺𝒂𝒓𝒆𝒆", "sign": "🥻"},
     15: {"name": "𝑪𝒓𝒊𝒔𝒕𝒎𝒂𝒔", "sign": "🎄"},
-    16: {"name": "𝑳𝒐𝒓𝒅", "sign": "👑"},
-    17: None  # Skip event
+    16: {"name": "𝑮𝒓𝒐𝒐𝒎", "sign": "💐"},
+    17: {"name": "𝑵𝒖𝒓𝒔𝒆", "sign": "🩺"},
+    18: {"name": "𝑾𝒆𝒅𝒅𝒊𝒏𝒈", "sign": "💍"},
+    19: {"name": "𝑪𝒉𝒆𝒆𝒓𝒍𝒆𝒂𝒅𝒆𝒓𝒔", "sign": "🎊"},
+    20: {"name": "𝑺𝒐𝒄𝒄𝒆𝒓", "sign": "⚽"},
+    21: {"name": "𝑩𝒂𝒔𝒌𝒆𝒕𝒃𝒂𝒍𝒍", "sign": "🏀"},
+    22: {"name": "𝑳𝒐𝒓𝒅", "sign": "👑"},
+    23: None  # Skip event
 }
 
 
@@ -96,7 +102,7 @@ async def upload(update: Update, context: CallbackContext) -> None:
                 chat_id=CHARA_CHANNEL_ID,
                 photo=args[0],
                 caption=f'<b>{id}:</b> {character_name}\n<b>{anime}</b>\n(<b>{rarity[0]} 𝙍𝘼𝙍𝙄𝙏𝙔: </b>{rarity[2:]})' +
-                        (f'\n<b>Event:</b> {event["name"]} {event["sign"]}' if event else '') + 
+                        (f'\n\n{event["name"]} {event["sign"]}' if event else '') + 
                         f'\n\n𝑨𝒅𝒅𝒆𝒅 𝑩𝒚 ➥ <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>',
                 parse_mode='HTML'
             )
@@ -184,8 +190,14 @@ async def update(update: Update, context: CallbackContext) -> None:
                 13: {"name": "𝐆𝐫𝐨𝐮𝐩", "sign": "🤝🏻"},
                 14: {"name": "𝑺𝒂𝒓𝒆𝒆", "sign": "🥻"},
                 15: {"name": "𝑪𝒓𝒊𝒔𝒕𝒎𝒂𝒔", "sign": "🎄"},
-                16: {"name": "𝑳𝒐𝒓𝒅", "sign": "👑"},
-                17: {"name": None, "sign": None}
+                16: {"name": "𝑮𝒓𝒐𝒐𝒎", "sign": "💐"},
+                17: {"name": "𝑵𝒖𝒓𝒔𝒆", "sign": "🩺"},
+                18: {"name": "𝑾𝒆𝒅𝒅𝒊𝒏𝒈", "sign": "💍"},
+                19: {"name": "𝑪𝒉𝒆𝒆𝒓𝒍𝒆𝒂𝒅𝒆𝒓𝒔", "sign": "🎊"},
+                20: {"name": "𝑺𝒐𝒄𝒄𝒆𝒓", "sign": "⚽"},
+                21: {"name": "𝑩𝒂𝒔𝒌𝒆𝒕𝒃𝒂𝒍𝒍", "sign": "🏀"},
+                22: {"name": "𝑳𝒐𝒓𝒅", "sign": "👑"},
+                23: {"name": None, "sign": None}
             }
             try:
                 new_value = event_map[int(args[2])]
