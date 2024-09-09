@@ -44,7 +44,12 @@ tag_mappings = {
     '👥': '👥𝐃𝐮𝐨👥',
     '🤝🏻': '🤝🏻𝐆𝐫𝐨𝐮𝐩🤝🏻',
     '👑': '👑𝑳𝒐𝒓𝒅👑',
+    '🩺': '🩺𝑵𝒖𝒓𝒔𝒆🩺',
     '💍': '💍𝑾𝒆𝒅𝒅𝒊𝒏𝒈💍',
+    '🎊': '🎊𝑪𝒉𝒆𝒆𝒓𝒍𝒆𝒂𝒅𝒆𝒓𝒔🎊',
+    '⚽': '⚽𝑺𝒐𝒄𝒄𝒆𝒓⚽',
+    '🏀': '🏀𝑩𝒂𝒔𝒌𝒆𝒕𝒃𝒂𝒍𝒍🏀 ',
+    '💐': '💐𝑮𝒓𝒐𝒐𝒎💐',
     '💞': '💞𝑽𝒂𝒍𝒆𝒏𝒕𝒊𝒏𝒆💞',
 }
 
@@ -106,7 +111,7 @@ f"<b>{character['id']}:</b> {character['name']} x{user_character_count}\n"
             )
 
         # Create Inline Keyboard for Top 10 Grabbers for this specific character
-        keyboard = [[InlineKeyboardButton("Top 10 Grabbers", callback_data=f'top10_grabbers_{character["id"]}')]]
+        keyboard = [[InlineKeyboardButton("ᴛᴏᴘ 𝟷𝟶 ɢʀᴀʙʙᴇʀs", callback_data=f'top10_grabbers_{character["id"]}')]]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
         # Append special tags if present
