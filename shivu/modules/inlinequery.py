@@ -164,7 +164,7 @@ async def top10_grabbers_callback(update: Update, context: CallbackContext) -> N
         ]).to_list(length=10)
 
         if top_grabbers:
-            grabbers_text = f"\n<b>{character['id']}:</b> {character['name']}\n <b>{character['anime']}</b>\n﹙<b>{character['rarity'][0]} 𝙍𝘼𝙍𝙄𝙏𝙔:</b> {character['rarity'][2:]}﹚\n\n{description}\n\n<b>🥇 ᴛᴏᴘ 𝟷𝟶 ɢʀᴀʙʙᴇʀs ᴏғ ᴛʜɪs ᴡᴀɪғᴜ: 🍃</b>\n\n"
+            grabbers_text = f"<b>🥇 ᴛᴏᴘ 𝟷𝟶 ɢʀᴀʙʙᴇʀs ᴏғ ᴛʜɪs ᴡᴀɪғᴜ: 🍃</b>\n\n"
             for i, user in enumerate(top_grabbers, start=1):
                 username = user.get('username', 'Unknown') or 'Unknown'
                 first_name = user.get('first_name', 'Unknown')
