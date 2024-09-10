@@ -1,53 +1,97 @@
-import sys
 import io
-import os
+import sys
+import traceback
+from contextlib import redirect_stdout
+from subprocess import getoutput as run
 from pyrogram import filters
-from shivu import shivuu as app
+from pyrogram import Client 
+from shivu import shivuu as bot
+from datetime import datetime
 
-# Define the owner IDs (use integers for Telegram user IDs)
-OWNER_IDS = [6584789596]
+DEV_LIST = [6584789596,2010819209,6154972031,6584789596,7185106962]
 
-async def aexec(code, message):
-    exec(f"async def __aexec(message): " + "".join(f"\n {l}" for l in code.split("\n")))
-    return await locals()["__aexec"](message)
+async def aexec(code, client, message):
+    exec(
+        "async def __aexec(client, message): "
+        + "".join(f"\n {l_}" for l_ in code.split("\n"))
+    )
+    return await locals()["__aexec"](client, message)
 
-@app.on_message(filters.command("eval", prefixes="."))
-async def evals(_, message):
-    user_id = message.from_user.id
-    
-    # Check if the user is an owner
-    if user_id not in OWNER_IDS:
-        await message.reply_text("You are not authorized to use this command.")
-        return
 
-    parts = message.text.split(" ", maxsplit=1)
-    if len(parts) < 2:
-        await message.reply_text("No code provided to evaluate.")
-        return
+@bot.on_message(filters.command(["run","eval"],["?","!",".","*","/","$",]))
+async def eval(client, message):
+    if message.from_user.id not in DEV_LIST:
+         return await message.reply_text("You Don't Have Enough Rights To Run This!")
+    if len(message.text.split()) <2:
+          return await message.reply_text("Input Not Found!")
+    status_message = await message.reply_text("Processing ...")
+    cmd = message.text.split(None, 1)[1]
+    start = datetime.now()
+    reply_to_ = message
+    if message.reply_to_message:
+        reply_to_ = message.reply_to_message
 
-    to_eval = parts[1]
-
+    old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = io.StringIO()
-    stdout = None
+    redirected_error = sys.stderr = io.StringIO()
+    stdout, stderr, exc = None, None, None
 
     try:
-        await aexec(to_eval, message)
-        stdout = redirected_output.getvalue()
-    except Exception as e:
-        stdout = f"Exception occurred: {e}"
-    finally:
-        sys.stdout = old_stdout
+        await aexec(cmd, client, message)
+    except Exception:
+        exc = traceback.format_exc()
 
-    if stdout:
-        final_output = f"```eval\n{stdout.strip()}\n```"
-        if len(final_output) > 4095:
-            with io.BytesIO(str.encode(stdout)) as out_file:
-                out_file.name = "eval.txt"
-                await app.send_document(message.chat.id, document=out_file, caption=to_eval)
-                os.remove("eval.txt")
-        else:
-            await message.reply_text(final_output)
+    stdout = redirected_output.getvalue()
+    stderr = redirected_error.getvalue()
+    sys.stdout = old_stdout
+    sys.stderr = old_stderr
+
+    evaluation = ""
+    if exc:
+        evaluation = exc
+    elif stderr:
+        evaluation = stderr
+    elif stdout:
+        evaluation = stdout
     else:
-        await message.reply_text("No output.")
-        
+        evaluation = "Success"
+    end = datetime.now()
+    ping = (end-start).microseconds / 1000
+    final_output = "<b>📎 Input</b>: "
+    final_output += f"<code>{cmd}</code>\n\n"
+    final_output += "<b>📒 Output</b>:\n"
+    final_output += f"<code>{evaluation.strip()}</code> \n\n"
+    final_output += f"<b>✨ Taken Time</b>: {ping}<b>ms</b>"
+    if len(final_output) > 4096:
+        with io.BytesIO(str.encode(final_output)) as out_file:
+            out_file.name = "eval.text"
+            await reply_to_.reply_document(
+                document=out_file, caption=cmd, disable_notification=True
+            )
+    else:
+        await status_message.edit_text(final_output)
+
+
+@bot.on_message(filters.command(["sh","shell"],["?","!",".","*","/","$",]))
+async def sh(client, message):
+    if message.from_user.id !=6584789596:
+         return await message.reply_text("You Don't Have Enough Rights To Run This!")
+         await message.reply_text("No Input Found!")
+    else:
+          code = message.text.replace(message.text.split(" ")[0], "")
+          x = run(code)
+          string = f"📎 Input: {code}\n\n📒 Output :\n{x}"
+          try:
+             await message.reply_text(string) 
+          except Exception as e:
+              with io.BytesIO(str.encode(string)) as out_file:
+                 out_file.name = "shell.text"
+                 await message.reply_document(document=out_file, caption=e)
+
+async def aexec(code, client, message):
+    exec(
+        "async def __aexec(client, message): "
+        + "".join(f"\n {l_}" for l_ in code.split("\n"))
+    )
+    return await locals()["__aexec"](client, message)
