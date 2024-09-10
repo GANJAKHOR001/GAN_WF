@@ -15,7 +15,7 @@ Use rarity number accordingly:
 rarity_map = 1 (🟢 Common), 2 (🟣 Rare), 3 (🟡 Legendary), 4 (💮 Special Edition), 5 (🔮 Premium Edition), 6 (🎗️ Supreme)
 
 Use event number accordingly:
-event_map = 1 (🏖 Summer), 2 (👘 Kimono), 3 (☃️ Winter), 4 (💞 Valentine), 5 (🎒 School), 6 (🎃 Halloween), 7 (🎮 Game), 8 (🎩 Tuxedo), 9 (👥 Duo), 10 (🧹 Made), 11 (☔ Monsoon), 12 (🐰 Bunny),  13 (🤝🏻 Group), 14 (🥻 Saree), 15 (🎄 Cristmas), 16 (💐 Groom), 17 (🩺 Nurse), 18 (💍 Wedding), 19 (🎊 Cheerleaders), 20 (⚽ Soccer), 21 (🏀 Basketball), 22 (👑 Lord), 23 (None)"""
+event_map = 1 (🏖 Summer), 2 (👘 Kimono), 3 (☃️ Winter), 4 (💞 Valentine), 5 (🎒 School), 6 (🎃 Halloween), 7 (🎮 Game), 8 (🎩 Tuxedo), 9 (👥 Duo), 10 (🧹 Made), 11 (☔ Monsoon), 12 (🐰 Bunny),  13 (🤝🏻 Group), 14 (🥻 Saree), 15 (🎄 Cristmas), 16 (💐 Groom), 17 (🩺 Nurse), 18 (💍 Wedding), 19 (🎊 Cheerleaders), 20 (⚽ Soccer), 21 (🏀 Basketball), 22 (🥂 Party), 22 (👑 Lord), 23 (None)"""
 
 EVENT_MAPPING = {
     1: {"name": "𝒔𝒖𝒎𝒎𝒆𝒓", "sign": "🏖"},
@@ -39,8 +39,9 @@ EVENT_MAPPING = {
     19: {"name": "𝑪𝒉𝒆𝒆𝒓𝒍𝒆𝒂𝒅𝒆𝒓𝒔", "sign": "🎊"},
     20: {"name": "𝑺𝒐𝒄𝒄𝒆𝒓", "sign": "⚽"},
     21: {"name": "𝑩𝒂𝒔𝒌𝒆𝒕𝒃𝒂𝒍𝒍", "sign": "🏀"},
-    22: {"name": "𝑳𝒐𝒓𝒅", "sign": "👑"},
-    23: None  # Skip event
+    22: {"name": "𝑷𝒂𝒓𝒕𝒚", "sign": "🥂"},
+    23: {"name": "𝑳𝒐𝒓𝒅", "sign": "👑"},
+    24: None  # Skip event
 }
 
 
@@ -158,7 +159,7 @@ async def update(update: Update, context: CallbackContext) -> None:
             return
 
         # Check if field is valid
-        valid_fields = ['img_url', 'name', 'anime', 'rarity', 'event']
+        valid_fields = ['img_url', 'name', 'anime', 'rarity', 'event', 'id']
         if args[1] not in valid_fields:
             await update.message.reply_text(f'Invalid field. Please use one of the following: {", ".join(valid_fields)}')
             return
@@ -181,7 +182,7 @@ async def update(update: Update, context: CallbackContext) -> None:
                 4: {"name": "𝑽𝒂𝒍𝒆𝒏𝒕𝒊𝒏𝒆", "sign": "💞"},
                 5: {"name": "𝑺𝒄𝒉𝒐𝒐𝒍", "sign": "🎒"},
                 6: {"name": "𝑯𝒂𝒍𝒍𝒐𝒘𝒆𝒆𝒏", "sign": "🎃"},
-                7: {"name": "𝐶𝑂𝑆𝑃𝐿𝐴𝑌", "sign": "🎮"},
+                7: {"name": "", "sign": "🎮"},
                 8: {"name": "𝑻𝒖𝒙𝒆𝒅𝒐", "sign": "🎩"},
                 9: {"name": "𝐃𝐮𝐨", "sign": "👥"},
                 10: {"name": "𝑴𝒂𝒅𝒆", "sign": "🧹"},
@@ -196,8 +197,9 @@ async def update(update: Update, context: CallbackContext) -> None:
                 19: {"name": "𝑪𝒉𝒆𝒆𝒓𝒍𝒆𝒂𝒅𝒆𝒓𝒔", "sign": "🎊"},
                 20: {"name": "𝑺𝒐𝒄𝒄𝒆𝒓", "sign": "⚽"},
                 21: {"name": "𝑩𝒂𝒔𝒌𝒆𝒕𝒃𝒂𝒍𝒍", "sign": "🏀"},
-                22: {"name": "𝑳𝒐𝒓𝒅", "sign": "👑"},
-                23: {"name": None, "sign": None}
+                22: {"name": 𝑷𝒂𝒓𝒕𝒚", "sign": "🥂"},
+                23: {"name": "𝑳𝒐𝒓𝒅", "sign": "👑"},
+                24: {"name": None, "sign": None}
             }
             try:
                 new_value = event_map[int(args[2])]
@@ -215,7 +217,7 @@ async def update(update: Update, context: CallbackContext) -> None:
             message = await context.bot.send_photo(
                 chat_id=CHARA_CHANNEL_ID,
                 photo=new_value,
-                caption=f'<b>{character["id"]}:</b> {character["name"]}\n<b>{character["anime"]}</b>\n(<b>{character["rarity"][0]} 𝙍𝘼𝙍𝙄𝙏𝙔:</b> {character["rarity"][2:]})\n{character["event"]["sign"] if character.get("event") else ""}\n\n𝑼𝒑𝒅𝒂𝒕𝒆𝒅 𝑩𝒚 ➥ <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>',
+                caption=f'<b>{character["id"]}:</b> {character["name"]}\n<b>{character["anime"]}</b>\n(<b>{character["rarity"][0]} 𝙍𝘼𝙍𝙄𝙏𝙔:</b> {character["rarity"][2:]})\n{character["event"]["sign"]}{character["event"]["name"]}{character["event"]["sign"] if character.get("event") else ""}\n\n𝑼𝒑𝒅𝒂𝒕𝒆𝒅 𝑩𝒚 ➥ <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>',
                 parse_mode='HTML'
             )
             character['message_id'] = message.message_id
@@ -223,7 +225,7 @@ async def update(update: Update, context: CallbackContext) -> None:
         else:
             caption = f'<b>{character["id"]}:</b> {character["name"]}\n<b>{character["anime"]}</b>\n(<b>{character["rarity"][0]} 𝙍𝘼𝙍𝙄𝙏𝙔:</b> {character["rarity"][2:]})\n'
             if character.get("event"):
-                caption += f'{character["event"]["sign"]} {character["event"]["name"]}\n'
+                caption += f'{character["event"]["sign"]}{character["event"]["name"]}{character ["event"]["sign"]\n'
             caption += f'\n𝑼𝒑𝒅𝒂𝒕𝒆𝒅 𝑩𝒚 ➥ <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>'
 
             await context.bot.edit_message_caption(
