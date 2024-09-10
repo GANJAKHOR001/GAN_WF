@@ -54,7 +54,21 @@ async def check_character(update: Update, context: CallbackContext) -> None:
             elif '🤝🏻' in character['name']:
                 response_message += "\n\n🤝🏻𝐆𝐫𝐨𝐮𝐩🤝🏻"
             elif '👑' in character['name']:
-                response_message += "\n\👑𝑳𝒐𝒓𝒅👑n"
+                response_message += "\n\n👑𝑳𝒐𝒓𝒅👑"
+            elif '🩺' in character['name']:
+                response_message += "\n\n🩺𝑵𝒖𝒓𝒔𝒆🩺"
+            elif '💍' in character['name']:
+                response_message += "\n\n💍𝑾𝒆𝒅𝒅𝒊𝒏𝒈💍"
+            elif '🎊' in character['name']:
+                response_message += "\n\n🎊𝑪𝒉𝒆𝒆𝒓𝒍𝒆𝒂𝒅𝒆𝒓𝒔🎊"
+            elif '⚽' in character['name']:
+                response_message += "\n\n⚽𝑺𝒐𝒄𝒄𝒆𝒓⚽"
+            elif '🏀' in character['name']:
+                response_message += "\n\n🏀𝑩𝒂𝒔𝒌𝒆𝒕𝒃𝒂𝒍𝒍🏀"
+            elif '💐' in character['name']:
+                response_message += "\n\n💐𝑮𝒓𝒐𝒐𝒎💐"
+            elif '🥂' in character['name']:
+                response_message += "\n\n🥂𝑷𝒂𝒓𝒕𝒚🥂"
             elif '💞' in character['name']:
                 response_message += "\n\n💞𝑽𝒂𝒍𝒆𝒏𝒕𝒊𝒏𝒆💞"
 
