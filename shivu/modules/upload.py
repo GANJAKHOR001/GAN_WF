@@ -103,7 +103,7 @@ async def upload(update: Update, context: CallbackContext) -> None:
                 chat_id=CHARA_CHANNEL_ID,
                 photo=args[0],
                 caption=f'<b>{id}:</b> {character_name}\n<b>{anime}</b>\n(<b>{rarity[0]} 𝙍𝘼𝙍𝙄𝙏𝙔: </b>{rarity[2:]})' +
-                        (f'\n\n{event["name"]} {event["sign"]}' if event else '') + 
+                        (f'\n\n{event["sign"]} {event["name"]} {event["sign"]}' if event else '') + 
                         f'\n\n𝑨𝒅𝒅𝒆𝒅 𝑩𝒚 ➥ <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>',
                 parse_mode='HTML'
             )
@@ -225,7 +225,7 @@ async def update(update: Update, context: CallbackContext) -> None:
         else:
             caption = f'<b>{character["id"]}:</b> {character["name"]}\n<b>{character["anime"]}</b>\n(<b>{character["rarity"][0]} 𝙍𝘼𝙍𝙄𝙏𝙔:</b> {character["rarity"][2:]})\n'
             if character.get("event"):
-                caption += f'{character["event"]["sign"]}{character["event"]["name"]}{character ["event"]["sign"]\n'
+                caption += f'{character["event"]["sign"]}{character["event"]["name"]}{character["event"]["sign"]}\n'
             caption += f'\n𝑼𝒑𝒅𝒂𝒕𝒆𝒅 𝑩𝒚 ➥ <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>'
 
             await context.bot.edit_message_caption(
