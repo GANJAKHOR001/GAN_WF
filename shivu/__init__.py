@@ -3,6 +3,7 @@ import os
 from pyrogram import Client 
 from telegram.ext import Application
 from motor.motor_asyncio import AsyncIOMotorClient
+from .database import sudo_users_collection  
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
