@@ -125,6 +125,6 @@ async def claim(_, message: t.Message):
             for character in unique_characters
         ]
         for img_url, caption in zip(img_urls, captions):
-            await message.reply_photo(photo=img_url, caption=caption)
-    except Exception as e:
-        print(e)
+            aawait message.reply_photo(photo=img_url, caption=caption, parse_mode='HTML')
+except Exception as e:
+    print(e)
