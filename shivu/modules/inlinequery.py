@@ -183,7 +183,7 @@ async def top10_grabbers_callback(update: Update, context: CallbackContext) -> N
                 character_count = user.get('character_count', 0)
                 grabbers_text += f'{i}. <a href="https://t.me/{username}"><b>{first_name}</b></a> ➾ <b>{character_count}</b>\n'
         else:
-            grabbers_text = f"No grabbers found for Character {character_id}."
+            grabbers_text = f"<b>ɴᴏ ɢʀᴀʙʙᴇs ғᴏᴜɴᴅ ғᴏʀ ᴛʜɪs ᴄʜᴀʀᴀᴄᴛᴇʀ..⁉️</b>."
 
     except Exception as e:
         grabbers_text = f"An error occurred while fetching top grabbers: {str(e)}"
