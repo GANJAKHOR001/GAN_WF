@@ -123,9 +123,9 @@ async def claim(_, message: t.Message):
         img_urls = [character['img_url'] for character in unique_characters]
         captions = [
             f"<b>ᴄᴏɴɢʀᴀᴛᴜʟᴀᴛɪᴏɴ𝗌 🎊 {mention}!</b>\n\n\n<b>🎀 ɴᴀᴍᴇ :</b> {character['name']}\n\n<b>⚜️ ᴀɴɪᴍᴇ :</b> {character['anime']}\n\n\n<b>ᴄᴏᴍᴇ ᴀɢᴀɪɴ ᴛᴏᴍᴏʀʀᴏᴡ ғᴏʀ ʏᴏᴜʀ ɴᴇ𝗑ᴛ ᴄʟᴀɪᴍ 🍀</b>\n"
-            for character in unique_characters
-        ]
-        for img_url, caption in zip(img_urls, captions):
-            await message.reply_photo(photo=img_url, caption=caption, parse_mode='HTML')
+        for character in unique_characters
+    ]
+    for img_url, caption in zip(img_urls, captions):
+        await message.reply_photo(photo=img_url, caption=caption, parse_mode='HTML')
 except Exception as e:
-    print(e)
+    print(f"An error occurred: {e}")
