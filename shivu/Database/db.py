@@ -2,7 +2,7 @@ from pymongo import MongoClient
 import os
 
 
-MONGO_URI = os.getenv("mongodb+srv://mongo2:heyzxcyour61681843@cluster0.a6dvvjg.mongodb.net/?retryWrites=true&w=majority")
+MONGO_URI = os.getenv("mongodb+srv://mongodbflex:L3GxCeWU3UcgFZZX-hwjiwjve@cluster0.czbo8.mongodb.net/?retryWrites=true&w=majority")
 DB_NAME = os.getenv("DB_NAME", "Character_catcher")
 COLLECTION_NAME = "anime_characters_lol"
 
